@@ -1,5 +1,9 @@
 # API and design notes — 2026-09-10
 
+Maintainer notes for hook and runtime changes. Users installing the plugin can
+skip this file; see the [README](../README.md) and
+[installation](installation.md) instead.
+
 ## Inspected before implementation
 
 - Installed CLI: `opencode --version` → **1.18.30**; npm package metadata agrees.
