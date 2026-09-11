@@ -13,7 +13,15 @@ Discover skills OpenCode already knows (native `skill` listing and `SKILL.md` un
 
 Skip bundled OpenSkillGen skills (`skill-mining`, `skill-curation`) and built-ins such as `customize-opencode` unless the user named them. Do not invent skills that are not on disk.
 
-Look for: significant overlap, contradictions, obsolete instructions, unnecessary fragmentation, a clearly better replacement, empty/broken frontmatter, or secrets that should never have been stored.
+Judge each skill as one on-demand job whose description is the discovery index and whose body is the procedure the agent would get wrong without it.
+
+Look for:
+
+- Description missing what or when, first person, too broad/narrow, or colliding trigger terms with another skill
+- Body mixing two jobs (split) or two skills teaching the same job (merge)
+- Always-on conventions stored as a skill (propose delete; do not write AGENTS.md)
+- Generic model knowledge, inferred/unconfirmed rules, evidence or motivation in the body, equal-option menus, vague names (`helper`, `utils`)
+- Significant overlap, contradictions, obsolete instructions, unnecessary fragmentation, a clearly better replacement, empty/broken frontmatter, or secrets that should never have been stored
 
 When uncertain, leave the skill alone.
 
@@ -27,4 +35,4 @@ If nothing needs changing, say so and stop. Do not generate new procedural skill
 
 Do not write, merge, rename, or delete until the user approves that specific operation. Reviewing the library, listing overlap, or silence is not approval. Merging into a target does not authorize deleting the source unless the user said to delete it.
 
-After approval, use native file tools. Read before edit. Preserve unrelated sections and supporting files. Keep valid `name`/`description` frontmatter; folder name must match. Never persist secrets; strip them if that is the approved edit. Show each path changed. Restart OpenCode to refresh discovery.
+After approval, use native file tools. Read before edit. Preserve unrelated sections and supporting files. Keep valid `name`/`description` frontmatter; folder name must match. Generated descriptions stay third person, what+when+triggers, never "Use ONLY when". Never persist secrets; strip them if that is the approved edit. Show each path changed. Restart OpenCode to refresh discovery.

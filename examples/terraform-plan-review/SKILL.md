@@ -1,6 +1,6 @@
 ---
 name: terraform-plan-review
-description: Use when preparing Terraform changes for this team's environments; follow the team's saved-plan review and approval procedure.
+description: Review and apply this team's Terraform changes using the saved-plan procedure. Use when preparing, reviewing, or applying Terraform plans for this team's environments.
 ---
 
 # Terraform plan review

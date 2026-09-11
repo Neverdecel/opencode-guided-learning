@@ -43,6 +43,11 @@ test("skill-mining is capture-from-work, not library cleanup", async () => {
   assert.match(mining.body, /Do not write until the user approves/)
   assert.match(mining.body, /Mining, silence, or task success is not approval/)
   assert.match(mining.body, /Merging does not authorize deleting/)
+  assert.match(mining.body, /one on-demand job/)
+  assert.match(mining.body, /not-a-skill/)
+  assert.match(mining.body, /what\+when/)
+  assert.match(mining.body, /never "Use ONLY when"/)
+  assert.match(mining.body, /do not write AGENTS\.md/)
 })
 
 test("skill-curation is library hygiene, not mining, and keeps sources unless deletion is approved", async () => {
@@ -55,4 +60,8 @@ test("skill-curation is library hygiene, not mining, and keeps sources unless de
   assert.match(curation.body, /skill-mining/)
   assert.match(curation.body, /customize-opencode/)
   assert.match(curation.body, /Do not generate new procedural skills here/)
+  assert.match(curation.body, /one on-demand job/)
+  assert.match(curation.body, /what or when/)
+  assert.match(curation.body, /do not write AGENTS\.md/)
+  assert.match(curation.body, /never "Use ONLY when"/)
 })

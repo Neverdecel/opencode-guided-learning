@@ -7,13 +7,23 @@ description: Use ONLY when the user explicitly asks to mine, extract, capture, o
 
 The user asked to mine skills. That is initiative to **propose** captures from this work, not a write permission and not a cue to suggest mining later on its own.
 
+## Entity
+
+A skill is one on-demand job: a named folder whose description is the only discovery index, and whose body is the confirmed procedure the agent would get wrong without it.
+
+Keep a candidate only if it is procedural, on-demand (not every session), discoverable (you can write a precise what+when description), non-generic, confirmed, durable, one trigger family, and secret-free.
+
+Drop as not-a-skill: always-on project conventions (AGENTS.md/rules), personas (agents), user-invoked prompts (commands), facts/memory, preferences, one-offs, speculation, this session's outcome, generic model knowledge. Stay silent; do not write AGENTS.md, agents, or commands.
+
+If two unrelated jobs appear, propose two skills. If you cannot write a what+when description without colliding with an existing skill, it is not a separate entity: update or drop.
+
 ## Mine
 
-From this conversation, extract only durable, reusable, specific knowledge the user would otherwise explain again: repeated workflows, consequential corrections, local conventions, proven troubleshooting, decision rules.
+From this conversation, extract only durable, reusable, specific knowledge the user would otherwise explain again: repeated workflows, consequential corrections, or proven troubleshooting.
 
 Skip temporary state, one-off commands, repository-obvious facts, generic knowledge, speculation, secrets, credentials, and casual preferences. When uncertain, omit the candidate.
 
-Load relevant existing skills first. Classify each candidate as new, improvement, duplicate, conflict, or temporary. Drop duplicates and temporary knowledge. Prefer updating an existing skill over creating another.
+Load relevant existing skills first. Classify each candidate as new, improvement, duplicate, conflict, not-a-skill, or temporary. Drop duplicates, not-a-skill, and temporary knowledge. Prefer updating an existing skill over creating another.
 
 ## Propose
 
@@ -25,4 +35,4 @@ Infer project scope for repository/team procedures; global only for how this use
 
 Do not write until the user approves the specific create/update (yes, rename, make it global, add X, merge with Y). Mining, silence, or task success is not approval. Merging does not authorize deleting a source skill unless that was explicit.
 
-After approval, use native file tools. Project: `.opencode/skills/<name>/SKILL.md`. Global: `~/.config/opencode/skills/<name>/SKILL.md`. Frontmatter `name` must match the folder (`^[a-z0-9]+(-[a-z0-9]+)*$`, ≤64). Description 1–1024 characters, when to use it. Body: confirmed rules, constraints, verification only — no transcripts, rollout counts, or today's outcome. Never persist secrets. Show the path. Restart OpenCode to rediscover it.
+After approval, use native file tools. Project: `.opencode/skills/<name>/SKILL.md`. Global: `~/.config/opencode/skills/<name>/SKILL.md`. Frontmatter `name` must match the folder (`^[a-z0-9]+(-[a-z0-9]+)*$`, ≤64). Description 1–1024 characters, third person, what it does + when to load it + trigger terms; distinct from other known skills; never "Use ONLY when". Body: confirmed rules, constraints, verification only — no transcripts, rollout counts, inferred steps, generic teaching, or today's outcome. Default with an escape hatch, not a menu. Never persist secrets. Show the path. Restart OpenCode to rediscover it.

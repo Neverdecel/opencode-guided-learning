@@ -124,6 +124,7 @@ await check("4 approval creates native skill and restart discovers it", async ()
   const discovered = JSON.parse(stdout)
   assert.ok(discovered.some((skill: { name: string; description: string }) =>
     skill.name === name && skill.description.length > 0 && skill.description.length <= 1024))
+  assert.doesNotMatch(source, /^---\nname: .+\ndescription: Use ONLY when /)
   assert.doesNotMatch(source, /last three|last 3|review.*complete.*no.*action/i,
     "Native save/discovery passed, but the model retained transient details")
 })
