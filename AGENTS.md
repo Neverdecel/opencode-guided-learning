@@ -1,7 +1,6 @@
 # Contributing
 
-- Keep runtime code in `src/index.ts` small. Reuse native skill discovery and file tools. Do not add a consent parser or write interceptor.
-- Preserve the human-approved learning contract. No autonomous persistence, background work, or separate memory store.
-- Inspect the pinned OpenCode plugin/SDK TypeScript types before changing hooks.
-- Run `npm run check` and `npm test`. Use `test/SCENARIOS.md` for model-behavior changes; never claim a prompt-string test proves model compliance.
-- Keep examples credential-free. Never run evaluation writes against a real skill library.
+- Keep runtime code in `src/index.ts` small. OpenCode loads that TypeScript source directly (no build). Reuse native skill discovery and file tools. Do not add a consent parser, write interceptor, persistence, background work, or a separate memory store.
+- Use V1 `experimental.chat.system.transform` and `experimental.session.compacting` only. 1.18.30’s V2 Promise `agent.transform` does not affect the normal session agent. Transform has no agent id: skip title/summary/compaction/explore by matching the built-in prefixes in `output.system` (recheck on OpenCode upgrades). Never set compacting `output.prompt`; skip the note if `prompt` is already set. Options are only `enabled` and `ignoredTopics`; unknown keys must throw. Inspect pinned `@opencode-ai/plugin` 1.18.30 types before changing hooks. Details: `docs/research.md`.
+- Node 24+. `npm run check` then `npm test` (`node --test test/*.test.ts`). That suite does not prove model compliance. Guidance or model-behavior changes: `test/SCENARIOS.md`. Isolated CLI from the checkout root (Docker + host `opencode` binary): `EVAL_SCRIPT=context sh test/live.sh` or `sh test/live.sh` (`EVAL_CASE=4` for one case). Never run evaluation writes against a real skill library.
+- Product skills go in `skills/` (opt-in `skills.paths`); keep `examples/` outside auto-discovery. Bundled skill `description` must start with `Use ONLY when `. Keep examples credential-free.
