@@ -115,8 +115,9 @@ npm test
 ```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for isolated CLI/model tests and
-[research notes](docs/research.md) for the V1/V2 API decision.
+[research notes](docs/research.md) for the V1/V2 API decision. Changes to
+`main` go through pull requests; the `check` workflow must pass.
 
 ## License
 
-[MIT](LICENSE).
+[MIT](LICENSE). See [SECURITY.md](SECURITY.md) to report a vulnerability.

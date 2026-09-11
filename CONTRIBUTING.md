@@ -55,7 +55,8 @@ intermittent failures; a successful rerun does not erase them.
 - Keep example skills outside auto-discovery directories. Ship product skills
   under `skills/`; users load them via `skills.paths`, not by copying into
   another project's `.opencode/skills/` unless they want a fork.
-- Submit focused pull requests with verification results.
+- Submit focused pull requests targeting `main`. Direct pushes, force-pushes,
+  and deleting `main` are blocked. The `check` CI job must pass before merge.
 - Include OpenCode/model versions and a minimal, sanitized reproduction in bug
   reports. Do not upload configuration secrets, real credentials, or private
   session exports.
