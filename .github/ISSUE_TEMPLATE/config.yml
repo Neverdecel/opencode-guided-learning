@@ -1,7 +1,7 @@
 blank_issues_enabled: true
 contact_links:
   - name: Report a vulnerability
-    url: https://github.com/Neverdecel/OpenSkillGen/security/advisories/new
+    url: https://github.com/Neverdecel/opencode-guided-learning/security/advisories/new
     about: Private security reports only — do not file public issues for exploits or secrets
   - name: OpenCode plugin docs
     url: https://opencode.ai/docs/plugins/
