@@ -1,6 +1,6 @@
-# OpenSkillGen
+# opencode-guided-learning
 
-[![Checks](https://github.com/Neverdecel/OpenSkillGen/actions/workflows/checks.yml/badge.svg)](https://github.com/Neverdecel/OpenSkillGen/actions/workflows/checks.yml)
+[![Checks](https://github.com/Neverdecel/opencode-guided-learning/actions/workflows/checks.yml/badge.svg)](https://github.com/Neverdecel/opencode-guided-learning/actions/workflows/checks.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 **Agent notices. Human decides. OpenCode remembers.**
@@ -16,31 +16,19 @@ Reply **yes**, **no**, **make it global**, **rename it**, **add X**, or **merge 
 ## Requirements
 
 - [OpenCode](https://opencode.ai) **1.18.30** (tested). The plugin uses experimental hooks; later versions need a compatibility check.
-- A git clone of this repository at a stable path.
-
-**Not published to npm.** Do not add `opencode-guided-learning` as a package name in `plugin`. Load the source file URL instead.
 
 ## Install
 
 ```sh
-git clone https://github.com/Neverdecel/OpenSkillGen.git
+git clone https://github.com/Neverdecel/opencode-guided-learning.git
+sh opencode-guided-learning/scripts/install.sh
 ```
 
-Add the **absolute** source-file URL to `plugin` in `~/.config/opencode/opencode.json` (all projects) or the project’s `opencode.json`:
+That runs `opencode plugin -g` with the checkout’s absolute path (patches global config). `scripts/install.sh --local` is this project only. After npm publish: `opencode plugin -g opencode-guided-learning@0.1.0` (pin the version).
 
-```json
-{
-  "$schema": "https://opencode.ai/config.json",
-  "plugin": ["file:///absolute/path/to/OpenSkillGen/src/index.ts"],
-  "skills": { "paths": ["/absolute/path/to/OpenSkillGen/skills"] }
-}
-```
+Optional: add the checkout `skills/` directory to `skills.paths` for `skill-mining` and `skill-curation`. **Quit and restart OpenCode** (including its backend when using OpenChamber).
 
-`skills.paths` is optional; it enables the bundled `skill-mining` and `skill-curation` skills. Keep existing config entries. **Quit and restart OpenCode** (including its backend when using OpenChamber).
-
-Windows example: `file:///C:/projects/OpenSkillGen/src/index.ts`.
-
-Confirm with `opencode debug config` (the resolved plugin list should include the file URL). Do not paste that output into issues; it can contain secrets. Full steps and troubleshooting: [docs/installation.md](docs/installation.md).
+Confirm with `opencode debug config`. Do not paste that output into issues; it can contain secrets. Full steps: [docs/installation.md](docs/installation.md).
 
 ## Usage
 
@@ -68,7 +56,7 @@ Both options are optional. Defaults: enabled, conservative, no ignored topics.
 ```json
 {
   "$schema": "https://opencode.ai/config.json",
-  "plugin": [["file:///absolute/path/to/OpenSkillGen/src/index.ts", {
+  "plugin": [["opencode-guided-learning@0.1.0", {
     "enabled": true,
     "ignoredTopics": ["personal editor preferences", "release-notes"]
   }]]
@@ -91,6 +79,7 @@ The runtime is one file: it appends guidance and a compaction note. No extra mod
 | [`skills/`](skills/) | Opt-in mining and curation skills |
 | [`examples/`](examples/) | Sample generated skill (not auto-discovered) |
 | [`test/`](test/) | Hook tests and isolated live eval |
+| [`scripts/install.sh`](scripts/install.sh) | Clone install via `opencode plugin` |
 | [`docs/`](docs/installation.md) | Install, troubleshooting, hook research, [skill entity](docs/skill-definition.md) |
 
 ## Contributing

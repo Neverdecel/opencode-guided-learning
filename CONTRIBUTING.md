@@ -10,8 +10,8 @@ or cleanup infrastructure.
 Requires Node.js 24+ and npm. OpenCode 1.18.30 is required for live CLI tests.
 
 ```sh
-git clone https://github.com/Neverdecel/OpenSkillGen.git
-cd OpenSkillGen
+git clone https://github.com/Neverdecel/opencode-guided-learning.git
+cd opencode-guided-learning
 npm ci
 npm run check
 npm test
@@ -61,6 +61,13 @@ checks are smoke only. Acceptance criteria:
 [test/SCENARIOS.md](test/SCENARIOS.md). Record intermittent failures; a later
 pass does not erase them. Never run evaluation writes against a real skill
 library.
+
+## Releases
+
+Package, repo, and plugin id are `opencode-guided-learning`. Publish with a
+`v*` tag or `workflow_dispatch` on `.github/workflows/publish.yml`; it needs
+the `NPM_TOKEN` secret. Do not `npm publish` from a laptop. Bump
+`package.json` version before tagging.
 
 ## Issues
 

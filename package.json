@@ -5,20 +5,28 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Neverdecel/OpenSkillGen.git"
+    "url": "git+https://github.com/Neverdecel/opencode-guided-learning.git"
   },
-  "homepage": "https://github.com/Neverdecel/OpenSkillGen#readme",
-  "bugs": { "url": "https://github.com/Neverdecel/OpenSkillGen/issues" },
+  "homepage": "https://github.com/Neverdecel/opencode-guided-learning#readme",
+  "bugs": { "url": "https://github.com/Neverdecel/opencode-guided-learning/issues" },
   "keywords": ["opencode", "opencode-plugin", "skills", "guided-learning"],
-  "private": true,
   "type": "module",
   "main": "./src/index.ts",
-  "exports": { ".": "./src/index.ts" },
+  "exports": {
+    ".": "./src/index.ts",
+    "./server": "./src/index.ts"
+  },
+  "files": ["src/index.ts", "skills"],
+  "publishConfig": { "access": "public" },
   "scripts": {
     "check": "tsc --noEmit",
-    "test": "node --test test/*.test.ts"
+    "test": "node --test test/*.test.ts",
+    "prepublishOnly": "npm run check && npm test"
   },
   "engines": { "node": ">=24", "opencode": ">=1.18.30" },
-  "dependencies": { "@opencode-ai/plugin": "1.18.30" },
-  "devDependencies": { "@types/node": "^26.5.0", "typescript": "7.0.2" }
+  "devDependencies": {
+    "@opencode-ai/plugin": "1.18.30",
+    "@types/node": "^26.5.0",
+    "typescript": "7.0.2"
+  }
 }

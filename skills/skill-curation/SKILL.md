@@ -11,7 +11,7 @@ The user asked to curate the skill library. That is initiative to **inspect and 
 
 Discover skills OpenCode already knows (native `skill` listing and `SKILL.md` under project `.opencode/skills` and global `~/.config/opencode/skills`). Load only what you need to judge overlap. Do not dump bodies into the reply.
 
-Skip bundled OpenSkillGen skills (`skill-mining`, `skill-curation`) and built-ins such as `customize-opencode` unless the user named them. Do not invent skills that are not on disk.
+Skip bundled plugin skills (`skill-mining`, `skill-curation`) and built-ins such as `customize-opencode` unless the user named them. Do not invent skills that are not on disk.
 
 Judge each skill as one on-demand job whose description is the discovery index and whose body is the procedure the agent would get wrong without it.
 
