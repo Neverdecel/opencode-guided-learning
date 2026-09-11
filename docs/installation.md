@@ -13,7 +13,10 @@ bare package name to OpenCode's config: use the local source-file URL.
    array in the global or project OpenCode config. An absolute file URL avoids
    resolving a relative path against the wrong config directory. On Windows,
    use a URL such as `file:///C:/projects/OpenSkillGen/src/index.ts`.
-4. Quit and restart the OpenCode process. Restart the backend as well when a
+4. To use the bundled `skill-mining` and `skill-curation` skills, add the
+   checkout's `skills` directory to `skills.paths` (absolute path). Do not copy
+   them into `.opencode/skills/` of other projects unless you want a fork.
+5. Quit and restart the OpenCode process. Restart the backend as well when a
    frontend such as OpenChamber manages it.
 
 The source imports only TypeScript types from `@opencode-ai/plugin`. OpenCode's
@@ -30,7 +33,8 @@ permissions, and other plugin entries when editing an existing file.
 ## Verify installation
 
 Run `opencode debug config` from the project where you intend to use the plugin.
-Confirm the resolved plugin list contains the source-file URL. This output can
+Confirm the resolved plugin list contains the source-file URL. If you enabled the bundled skills, `opencode debug skill` should list
+`skill-mining` and `skill-curation`. This output can
 include private configuration; do not paste the complete output into an issue.
 
 For transport verification, contributors can run the isolated test in

@@ -39,10 +39,21 @@ Append its **absolute source-file URL** to `plugin` in
 }
 ```
 
-Replace the example path and preserve existing config entries. OpenCode loads
-the file directly: **no build or npm publication is required**. Keep the checkout
-at that path. **Quit and restart OpenCode** (including its backend when using
-OpenChamber). See [installation and troubleshooting](docs/installation.md).
+To invoke **skill-mining** and **skill-curation**, also add the checkout's
+`skills` directory:
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugin": ["file:///absolute/path/to/OpenSkillGen/src/index.ts"],
+  "skills": { "paths": ["/absolute/path/to/OpenSkillGen/skills"] }
+}
+```
+
+Replace the example paths and preserve existing config entries. OpenCode loads
+the plugin file directly: **no build or npm publication is required**. Keep the
+checkout at those paths. **Quit and restart OpenCode** (including its backend
+when using OpenChamber). See [installation and troubleshooting](docs/installation.md).
 
 ## Behavior
 
@@ -55,7 +66,12 @@ OpenChamber). See [installation and troubleshooting](docs/installation.md).
   `.opencode/skills/<name>/SKILL.md`; general user workflows go in
   `~/.config/opencode/skills/<name>/SKILL.md`. You can override the proposed scope.
 - **Concise skills:** reusable rules and verification, not transcripts or secrets.
-  See the [example skill](examples/terraform-plan-review/SKILL.md).
+  See the [example generated skill](examples/terraform-plan-review/SKILL.md).
+- **On demand:** invoke `skill-mining` to extract candidates from the current
+  work, or `skill-curation` to review the existing library for merges, edits, or
+  deletions. Neither is a write permission. See
+  [skills/skill-mining/SKILL.md](skills/skill-mining/SKILL.md) and
+  [skills/skill-curation/SKILL.md](skills/skill-curation/SKILL.md).
 
 ## Configuration
 
@@ -77,9 +93,12 @@ Restart after config changes or skill writes to refresh discovery.
 
 ## Architecture and limits
 
-One source file appends guidance through `experimental.chat.system.transform`.
-It uses native skill discovery and editing tools. No additional model calls,
-background work, skill database, or automatic pruning.
+One source file appends guidance through `experimental.chat.system.transform`
+and a short note through `experimental.session.compacting`. It skips 1.18.30
+hidden/read-only built-in system prompts (compaction, title, summary, explore)
+because that hook has no agent id. It uses native skill discovery and editing
+tools. No additional model calls, background work, skill database, write
+interceptor, or automatic pruning.
 
 **Consent and secret exclusion are model instructions, not a filesystem security
 boundary.** Existing OpenCode permissions still apply. Live evaluations have

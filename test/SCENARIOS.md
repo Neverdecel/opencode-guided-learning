@@ -57,7 +57,9 @@ evaluation results separately; do not mark this checklist passed from `npm test`
 the credential-free `opencode/big-pickle` model. It uses plain-text replies
 (`question` is disabled because the CLI runner is noninteractive) and permits
 native file edits in the disposable container. It validates filesystem changes
-and native discovery, and prints tool inputs for review. Keyword checks are only
-smoke assertions: review the actual prose and saved content for quality. The
-additional regressions above remain manual. `EVAL_CASE=4` selects the approval
-case, and `EVAL_MODEL` may select another model that requires no mounted credentials.
+and native discovery, fails if a no-write case *attempts* a skill/config write
+(including a blocked tool call), and prints tool inputs for review. Keyword
+checks are only smoke assertions: review the actual prose and saved content for
+quality. The additional regressions above remain manual. `EVAL_CASE=4` selects
+the approval case, and `EVAL_MODEL` may select another model that requires no
+mounted credentials.

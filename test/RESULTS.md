@@ -51,3 +51,11 @@ Use a model you trust to follow instructions and review proposed changes. The
 plugin deliberately relies on native tools and permissions; it neither adds a
 filesystem sandbox nor silently repairs the model's writes. The additional
 compaction, permission, and suppression regressions in SCENARIOS.md remain manual.
+
+## Later hardening
+
+After the documentation review, hook tests cover skipping 1.18.30
+compaction/title/summary/explore system prompts and appending a compaction
+preservation note without replacing the compaction prompt. Live runs now fail
+on attempted skill/config writes in no-write cases, not only on leftover files.
+Those checks were not part of the 2026-09-10 model table above.

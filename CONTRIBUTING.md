@@ -42,9 +42,9 @@ is `opencode/big-pickle`; availability depends on the provider. The noninteracti
 runner uses text replies and disables the `question` tool. Model tests are
 opt-in, not GitHub CI jobs.
 
-Review tool traces and generated prose as well as exit status. A blocked
-unauthorized write is still a model-behavior failure. Keyword assertions are
-only smoke checks. Use [SCENARIOS.md](test/SCENARIOS.md) for the complete acceptance
+Review tool traces and generated prose as well as exit status. Live cases that
+must not persist now fail on attempted skill/config writes, including blocked
+tool calls. Keyword assertions are only smoke checks. Use [SCENARIOS.md](test/SCENARIOS.md) for the complete acceptance
 criteria and additional manual regressions. Record failures honestly, including
 intermittent failures; a successful rerun does not erase them.
 
@@ -52,7 +52,9 @@ intermittent failures; a successful rerun does not erase them.
 
 - Inspect pinned `@opencode-ai/plugin` and SDK types before changing hooks.
 - Update documentation and examples together with options or behavior changes.
-- Keep example skills outside auto-discovery directories.
+- Keep example skills outside auto-discovery directories. Ship product skills
+  under `skills/`; users load them via `skills.paths`, not by copying into
+  another project's `.opencode/skills/` unless they want a fork.
 - Submit focused pull requests with verification results.
 - Include OpenCode/model versions and a minimal, sanitized reproduction in bug
   reports. Do not upload configuration secrets, real credentials, or private

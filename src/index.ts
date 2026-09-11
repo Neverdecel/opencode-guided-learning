@@ -1,5 +1,14 @@
 import type { PluginModule } from "@opencode-ai/plugin"
 
+// 1.18.30 system.transform has no agent id. These prefixes are from the
+// built-in hidden/read-only agents in packages/opencode/src/agent/agent.ts.
+const skipWhenSystemIncludes = [
+  "You are a context summarization agent.",
+  "You are a title generator. You output ONLY a thread title.",
+  "Summarize what was done in this conversation. Write like a pull request description.",
+  "You are a file search specialist. You excel at thoroughly navigating and exploring codebases.",
+]
+
 const guidance = `## Guided learning
 Agent notices. Human decides. OpenCode remembers.
 
@@ -19,14 +28,27 @@ Save project skills at the actual project root in .opencode/skills/<name>/SKILL.
 
 "Never suggest this kind again" authorizes recording that topic in this plugin's ignoredTopics options in the appropriate existing OpenCode config; preserve other settings and explain the edit. If the topic/scope is unclear, ask briefly. Honor it immediately in this conversation; persist only the requested preference and restart for future sessions. Do not turn a rejection into a skill. Do not keep a separate memory store.`
 
+const compactionNote =
+  "Preserve pending guided-learning skill proposals, explicit yes/no/rename/merge decisions, and rejected or ignored topics. If approval is unclear after compaction, ask rather than infer it."
+
+function parseOptions(options: Record<string, unknown>) {
+  const { enabled = true, ignoredTopics = [], ...unknown } = options
+  if (Object.keys(unknown).length || typeof enabled !== "boolean" ||
+      !Array.isArray(ignoredTopics) || ignoredTopics.some((topic) => typeof topic !== "string" || !topic.trim())) {
+    throw new TypeError("guided-learning options: enabled must be boolean; ignoredTopics must be nonempty strings; no other options")
+  }
+  return { enabled, ignoredTopics: ignoredTopics as string[] }
+}
+
+function skipInternalAgent(system: string[]) {
+  const joined = system.join("\n")
+  return skipWhenSystemIncludes.some((marker) => joined.includes(marker))
+}
+
 export default {
   id: "opencode-guided-learning",
   async server(_ctx, options = {}) {
-    const { enabled = true, ignoredTopics = [], ...unknown } = options
-    if (Object.keys(unknown).length || typeof enabled !== "boolean" ||
-        !Array.isArray(ignoredTopics) || ignoredTopics.some((topic) => typeof topic !== "string" || !topic.trim())) {
-      throw new TypeError("guided-learning options: enabled must be boolean; ignoredTopics must be nonempty strings; no other options")
-    }
+    const { enabled, ignoredTopics } = parseOptions(options)
     if (!enabled) return {}
 
     const instruction = guidance + (ignoredTopics.length
@@ -35,7 +57,12 @@ export default {
 
     return {
       "experimental.chat.system.transform": async ({ sessionID }, output) => {
-        if (sessionID && !output.system.includes(instruction)) output.system.push(instruction)
+        if (!sessionID || skipInternalAgent(output.system) || output.system.includes(instruction)) return
+        output.system.push(instruction)
+      },
+      "experimental.session.compacting": async (_input, output) => {
+        if (output.prompt || output.context.includes(compactionNote)) return
+        output.context.push(compactionNote)
       },
     }
   },

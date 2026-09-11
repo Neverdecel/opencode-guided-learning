@@ -1,24 +1,22 @@
 import assert from "node:assert/strict"
-import { readFile } from "node:fs/promises"
 import test from "node:test"
 import type { Hooks, PluginInput, PluginOptions } from "@opencode-ai/plugin"
 import plugin from "../src/index.ts"
 
 type Input = Parameters<NonNullable<Hooks["experimental.chat.system.transform"]>>[0]
 const input = (sessionID?: string): Input => ({ sessionID, model: {} as Input["model"] })
+const hookNames = ["experimental.chat.system.transform", "experimental.session.compacting"]
 
 async function load(options: PluginOptions = {}): Promise<Hooks> {
-  // The entire host context is inaccessible: the plugin must not call SDK,
-  // filesystem, shell, or session APIs. This is not a model simulator.
   const ctx = new Proxy({} as PluginInput, {
     get(_target, key) { assert.fail(`Unexpected host access: ${String(key)}`) },
   })
   return plugin.server(ctx, options)
 }
 
-test("registers only a system-context hook, with no persistence or permission hooks", async () => {
+test("registers only context hooks, with no persistence or permission hooks", async () => {
   const hooks = await load()
-  assert.deepEqual(Object.keys(hooks), ["experimental.chat.system.transform"])
+  assert.deepEqual(Object.keys(hooks).sort(), [...hookNames].sort())
   const output = { system: ["Original system", "Existing instructions"] }
   await hooks["experimental.chat.system.transform"]!(input("session-a"), output)
   assert.deepEqual(output.system.slice(0, 2), ["Original system", "Existing instructions"])
@@ -31,6 +29,21 @@ test("non-session calls are unchanged", async () => {
   const output = { system: ["Generate an agent configuration"] }
   await hooks["experimental.chat.system.transform"]!(input(), output)
   assert.deepEqual(output.system, ["Generate an agent configuration"])
+})
+
+test("skips hidden and read-only built-in agent systems", async () => {
+  const hooks = await load()
+  const transform = hooks["experimental.chat.system.transform"]!
+  for (const system of [
+    ["You are a context summarization agent.\nKeep every section."],
+    ["You are a title generator. You output ONLY a thread title.\nNothing else."],
+    ["Summarize what was done in this conversation. Write like a pull request description."],
+    ["You are a file search specialist. You excel at thoroughly navigating and exploring codebases."],
+  ]) {
+    const output = { system: [...system] }
+    await transform(input("session-a"), output)
+    assert.deepEqual(output.system, system)
+  }
 })
 
 test("disabled plugin registers nothing", async () => {
@@ -48,6 +61,26 @@ test("repeated transforms are idempotent and independent sessions get guidance",
   const second = { system: ["Existing instructions"] }
   await transform(input("session-b"), second)
   assert.deepEqual(second, first)
+})
+
+test("compaction adds a preservation note and does not replace the prompt", async () => {
+  const hooks = await load()
+  const compact = hooks["experimental.session.compacting"]!
+  const output = { context: ["prior"] as string[], prompt: undefined as string | undefined }
+  await compact({ sessionID: "session-a" }, output)
+  assert.equal(output.prompt, undefined)
+  assert.equal(output.context[0], "prior")
+  assert.match(output.context[1] ?? "", /ask rather than infer/)
+  const once = structuredClone(output)
+  await compact({ sessionID: "session-a" }, output)
+  assert.deepEqual(output, once)
+})
+
+test("compaction leaves a replaced prompt and its context untouched", async () => {
+  const hooks = await load()
+  const output = { context: ["keep"], prompt: "custom compaction prompt" }
+  await hooks["experimental.session.compacting"]!({ sessionID: "session-a" }, output)
+  assert.deepEqual(output, { context: ["keep"], prompt: "custom compaction prompt" })
 })
 
 test("ignored labels are encoded as data; options do not leak across instances", async () => {
@@ -69,7 +102,8 @@ test("invalid options reject rather than accidentally enabling learning", async 
   }
 })
 
-test("example has the documented native skill frontmatter and matching folder", async () => {
+test("example generated skill has native frontmatter matching its folder", async () => {
+  const { readFile } = await import("node:fs/promises")
   const source = await readFile(new URL("../examples/terraform-plan-review/SKILL.md", import.meta.url), "utf8")
   const match = source.match(/^---\nname: (.+)\ndescription: (.+)\n---\n\n([\s\S]+)$/)
   assert.ok(match)
