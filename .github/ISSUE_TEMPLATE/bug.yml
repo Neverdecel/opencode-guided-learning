@@ -1,0 +1,39 @@
+name: Bug report
+description: Something is wrong with loading, hooks, or documented behavior
+title: "[Bug] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: Do not paste secrets, API keys, full `opencode debug config` output, or private session exports.
+  - type: input
+    id: opencode
+    attributes:
+      label: OpenCode version
+      placeholder: "1.18.30"
+    validations:
+      required: true
+  - type: input
+    id: model
+    attributes:
+      label: Model (if relevant)
+      placeholder: "opencode/big-pickle"
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Sanitized reproduction
+      description: Minimal steps. Redact credentials and private paths.
+    validations:
+      required: true

@@ -5,42 +5,28 @@
 
 **Agent notices. Human decides. OpenCode remembers.**
 
-A lightweight [OpenCode plugin](https://opencode.ai/docs/plugins/) for user-guided
-learning. During normal work, it nudges the agent to notice exceptionally useful,
-durable procedures and ask whether to save them as native skills.
+An [OpenCode](https://opencode.ai) [plugin](https://opencode.ai/docs/plugins/) that notices durable, reusable procedures during normal work and asks before saving them as native [skills](https://opencode.ai/docs/skills/).
 
-> This looks reusable: review the saved Terraform plan with the on-call owner,
-> then apply only that artifact. Save as `terraform-deploy-review` (project skill)?
+It is not a memory store, skill database, or write sandbox. After you approve, saves use OpenCode’s existing file tools and [permissions](https://opencode.ai/docs/permissions/).
 
-Reply naturally: **yes**, **no**, **make it global**, **rename it**, **add X**, or
-**merge with Y**. Ordinary work should produce no suggestion. Task completion
-comes first.
+> This looks reusable: review the saved Terraform plan with the on-call owner, then apply only that artifact. Save as `terraform-deploy-review` (project skill)?
+
+Reply **yes**, **no**, **make it global**, **rename it**, **add X**, or **merge with Y**. Ordinary work should produce no suggestion.
+
+## Requirements
+
+- [OpenCode](https://opencode.ai) **1.18.30** (tested). The plugin uses experimental hooks; later versions need a compatibility check.
+- A git clone of this repository at a stable path.
+
+**Not published to npm.** Do not add `opencode-guided-learning` as a package name in `plugin`. Load the source file URL instead.
 
 ## Install
-
-Tested with **OpenCode 1.18.30**. The plugin uses an experimental hook; later
-versions need compatibility verification. Node.js 24+ and npm are needed for
-development checks, not for OpenCode to load the TypeScript source.
-
-Clone the repository to a permanent location:
 
 ```sh
 git clone https://github.com/Neverdecel/OpenSkillGen.git
 ```
 
-Append its **absolute source-file URL** to `plugin` in
-`~/.config/opencode/opencode.json` for all projects, or your project's
-`opencode.json` for that project only:
-
-```json
-{
-  "$schema": "https://opencode.ai/config.json",
-  "plugin": ["file:///absolute/path/to/OpenSkillGen/src/index.ts"]
-}
-```
-
-To invoke **skill-mining** and **skill-curation**, also add the checkout's
-`skills` directory:
+Add the **absolute** source-file URL to `plugin` in `~/.config/opencode/opencode.json` (all projects) or the project’s `opencode.json`:
 
 ```json
 {
@@ -50,32 +36,34 @@ To invoke **skill-mining** and **skill-curation**, also add the checkout's
 }
 ```
 
-Replace the example paths and preserve existing config entries. OpenCode loads
-the plugin file directly: **no build or npm publication is required**. Keep the
-checkout at those paths. **Quit and restart OpenCode** (including its backend
-when using OpenChamber). See [installation and troubleshooting](docs/installation.md).
+`skills.paths` is optional; it enables the bundled `skill-mining` and `skill-curation` skills. Keep existing config entries. **Quit and restart OpenCode** (including its backend when using OpenChamber).
 
-## Behavior
+Windows example: `file:///C:/projects/OpenSkillGen/src/index.ts`.
 
-- **Conservative:** confirmed workflows, meaningful corrections, team procedures,
-  and proven troubleshooting. Skip generic advice, temporary state, and guesses.
-- **Existing skills first:** load relevant native skills; prefer updating them
-  over creating duplicates. Suggest cleanup only when overlap or conflicts arise
-  during actual work. Changes and deletions require explicit approval.
-- **Two scopes:** project/team knowledge goes in
-  `.opencode/skills/<name>/SKILL.md`; general user workflows go in
-  `~/.config/opencode/skills/<name>/SKILL.md`. You can override the proposed scope.
-- **Concise skills:** reusable rules and verification, not transcripts or secrets.
-  See the [example generated skill](examples/terraform-plan-review/SKILL.md).
-- **On demand:** invoke `skill-mining` to extract candidates from the current
-  work, or `skill-curation` to review the existing library for merges, edits, or
-  deletions. Neither is a write permission. See
-  [skills/skill-mining/SKILL.md](skills/skill-mining/SKILL.md) and
-  [skills/skill-curation/SKILL.md](skills/skill-curation/SKILL.md).
+Confirm with `opencode debug config` (the resolved plugin list should include the file URL). Do not paste that output into issues; it can contain secrets. Full steps and troubleshooting: [docs/installation.md](docs/installation.md).
+
+## Usage
+
+| You | Plugin |
+| --- | --- |
+| Ordinary work | No extra chatter |
+| Confirm a durable team or personal procedure | Short save proposal at a stopping point |
+| Approve, reject, rename, or merge | Writes only after that reply |
+| Ask to mine or curate skills | Uses bundled skills if `skills.paths` is set |
+
+- **Project skills** (this repository only): `.opencode/skills/<name>/SKILL.md`
+- **Global skills** (how you work across projects): `~/.config/opencode/skills/<name>/SKILL.md`
+
+Example of a saved skill: [examples/terraform-plan-review/SKILL.md](examples/terraform-plan-review/SKILL.md). Bundled skills are not copied into other projects unless you want a fork.
 
 ## Configuration
 
-Both options are optional; the default is enabled and conservative.
+Both options are optional. Defaults: enabled, conservative, no ignored topics.
+
+| Option | Type | Meaning |
+| --- | --- | --- |
+| `enabled` | boolean | `false` registers no hooks |
+| `ignoredTopics` | nonempty strings | Labels or skill names to never suggest (not regexes) |
 
 ```json
 {
@@ -87,26 +75,27 @@ Both options are optional; the default is enabled and conservative.
 }
 ```
 
-Ignored topics are natural-language labels or skill names, not regexes. “Never
-suggest this kind again” authorizes saving that preference in these options.
-Restart after config changes or skill writes to refresh discovery.
+“Never suggest this kind again” may record that label in `ignoredTopics` of the existing config. Restart after config changes or skill writes.
 
-## Architecture and limits
+## Limits
 
-One source file appends guidance through `experimental.chat.system.transform`
-and a short note through `experimental.session.compacting`. It skips 1.18.30
-hidden/read-only built-in system prompts (compaction, title, summary, explore)
-because that hook has no agent id. It uses native skill discovery and editing
-tools. No additional model calls, background work, skill database, write
-interceptor, or automatic pruning.
+The runtime is one file: it appends guidance and a compaction note. No extra model calls, background work, or separate memory.
 
-**Consent and secret exclusion are model instructions, not a filesystem security
-boundary.** Existing OpenCode permissions still apply. Live evaluations have
-shown inconsistent scope, verbosity, and skill quality, plus an earlier
-unapproved write with weaker wording. Read the [verification record](test/RESULTS.md);
-passing hook tests does not prove model compliance.
+**Consent and secret exclusion are model instructions, not a filesystem guard.** Hook tests do not prove model compliance. Live evaluations have shown inconsistent scope, verbosity, and skill quality, and an earlier unapproved write with weaker wording. See [test/RESULTS.md](test/RESULTS.md).
+
+## Repository
+
+| Path | Role |
+| --- | --- |
+| [`src/index.ts`](src/index.ts) | Plugin (`id`: `opencode-guided-learning`) |
+| [`skills/`](skills/) | Opt-in mining and curation skills |
+| [`examples/`](examples/) | Sample generated skill (not auto-discovered) |
+| [`test/`](test/) | Hook tests and isolated live eval |
+| [`docs/`](docs/installation.md) | Install, troubleshooting, hook research |
 
 ## Contributing
+
+PRs target `main`. The `check` CI job must pass.
 
 ```sh
 npm ci
@@ -114,10 +103,8 @@ npm run check
 npm test
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for isolated CLI/model tests and
-[research notes](docs/research.md) for the V1/V2 API decision. Changes to
-`main` go through pull requests; the `check` workflow must pass.
+Node.js 24+ is for development checks only; OpenCode loads the TypeScript source directly. See [CONTRIBUTING.md](CONTRIBUTING.md), [AGENTS.md](AGENTS.md), and [docs/research.md](docs/research.md).
 
 ## License
 
-[MIT](LICENSE). See [SECURITY.md](SECURITY.md) to report a vulnerability.
+[MIT](LICENSE). Vulnerability reports: [SECURITY.md](SECURITY.md).
