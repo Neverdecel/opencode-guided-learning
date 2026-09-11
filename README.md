@@ -5,7 +5,7 @@
 
 **Agent notices. Human decides. OpenCode remembers.**
 
-An [OpenCode](https://opencode.ai) [plugin](https://opencode.ai/docs/plugins/) that notices durable, reusable procedures during normal work and asks before saving them as native [skills](https://opencode.ai/docs/skills/).
+An [OpenCode](https://opencode.ai) [plugin](https://opencode.ai/docs/plugins/) that notices durable, reusable procedures during normal work and asks before saving them as native [skills](https://opencode.ai/docs/skills/). A skill is one on-demand job, not always-on project rules, an agent, a command, or memory.
 
 It is not a memory store, skill database, or write sandbox. After you approve, saves use OpenCode’s existing file tools and [permissions](https://opencode.ai/docs/permissions/).
 
@@ -91,7 +91,7 @@ The runtime is one file: it appends guidance and a compaction note. No extra mod
 | [`skills/`](skills/) | Opt-in mining and curation skills |
 | [`examples/`](examples/) | Sample generated skill (not auto-discovered) |
 | [`test/`](test/) | Hook tests and isolated live eval |
-| [`docs/`](docs/installation.md) | Install, troubleshooting, hook research |
+| [`docs/`](docs/installation.md) | Install, troubleshooting, hook research, [skill entity](docs/skill-definition.md) |
 
 ## Contributing
 

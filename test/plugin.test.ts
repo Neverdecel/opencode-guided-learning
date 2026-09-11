@@ -24,6 +24,18 @@ test("registers only context hooks, with no persistence or permission hooks", as
   assert.ok(output.system[2].includes("## Guided learning"))
 })
 
+test("guidance defines an on-demand skill entity and does not write adjacent artifacts", async () => {
+  const hooks = await load()
+  const output = { system: [] as string[] }
+  await hooks["experimental.chat.system.transform"]!(input("session-a"), output)
+  const text = output.system[0] ?? ""
+  assert.match(text, /one on-demand job/)
+  assert.match(text, /what the skill does, when to load it/)
+  assert.match(text, /One job per skill/)
+  assert.match(text, /Do not write AGENTS\.md, agents, or commands/)
+  assert.match(text, /Never start a generated description with "Use ONLY when"/)
+})
+
 test("non-session calls are unchanged", async () => {
   const hooks = await load()
   const output = { system: ["Generate an agent configuration"] }
@@ -112,5 +124,8 @@ test("example generated skill has native frontmatter matching its folder", async
   assert.match(name, /^[a-z0-9]+(-[a-z0-9]+)*$/)
   assert.ok(name.length <= 64)
   assert.ok(description.length >= 1 && description.length <= 1024)
+  assert.match(description, /Review and apply/)
+  assert.match(description, /Use when preparing, reviewing, or applying/)
+  assert.doesNotMatch(description, /^Use ONLY when /)
   assert.ok(body.trim())
 })

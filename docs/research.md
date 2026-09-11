@@ -2,7 +2,8 @@
 
 Maintainer notes for hook and runtime changes. Users installing the plugin can
 skip this file; see the [README](../README.md) and
-[installation](installation.md) instead.
+[installation](installation.md) instead. Skill generation and curation ontology:
+[skill-definition.md](skill-definition.md).
 
 ## Inspected before implementation
 
